@@ -5,22 +5,29 @@ import (
 )
 
 func TestGetAllGifFrame(t *testing.T) {
-	DecodeGifFrame("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol.gif", "")
+	//	DecodeGifFrame("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/test_2.gif", "")
 }
 
 func TestEncodeFileToGif(t *testing.T) {
 	//	fileList := make([]string, 0)
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/0.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/0_0.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/1.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/1_0.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/2.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/2_0.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/3.jpg")
-	//	fileList = append(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/3_0.jpg")
-	//	EncodeFileToGif(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/res.gif")
+	//	dir := "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/test_2/"
+	//	index := 0
+	//	for index < 20 {
+	//		indexStr := strconv.Itoa(index)
+	//		fileList = append(fileList, dir+indexStr+"_70.jpg")
+	//		index++
+	//	}
+	//	EncodeFileToGif(fileList, "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/test_2_70.gif")
 }
 
 func TestCompressGif(t *testing.T) {
-	//	CompressGif("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol.gif", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol_256_100.gif", 50)
+	//	CompressGif("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol.gif", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol_90.gif", 50)
+}
+
+func TestCompressByGifsicle(t *testing.T) {
+	//	CompressByGifsicle("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/lol.gif", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/test/lol_one_10.gif", 10)
+}
+
+func TestCompressGifDir(t *testing.T) {
+	CompressGifDir("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/test/", "10")
 }

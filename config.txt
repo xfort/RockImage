@@ -1,0 +1,10 @@
+//压缩文件夹下的所有gif文件
+
+//gif来源文件夹路径
+fromDir=/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif
+
+//压缩后的存放路径
+outDir=/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/temp
+
+//范围1-256，数字越小，压缩后的文件越小（画面可能会不清晰）
+colorNum=128

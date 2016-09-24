@@ -7,10 +7,16 @@ import (
 	"image/jpeg"
 	"log"
 	"os"
+	"os/exec"
 	"path"
+	"runtime"
 	"strconv"
 )
 
+var CurrentPath string
+var CurrentOS string
+
+//解析出gif的所有图片
 func DecodeGifFrame(gifPath string, outDir string) {
 	giffile, err := os.Open(gifPath)
 	if err != nil {
@@ -32,7 +38,7 @@ func DecodeGifFrame(gifPath string, outDir string) {
 		log.Fatalln(err, "getAllFrame_DecodeAll")
 	}
 	//	dir, _ := os.Getwd()
-	imgOption := &jpeg.Options{Quality: 100}
+	imgOption := &jpeg.Options{Quality: 70}
 
 	for index, item := range gifData.Image {
 		itempath := path.Join(outDir, strconv.Itoa(index)+"_"+strconv.Itoa(imgOption.Quality)+".jpg")
@@ -102,7 +108,6 @@ func EncodeFileToGif(filelist []string, outpath string) {
 			log.Println("Decode", err, itemPic)
 			continue
 		}
-
 		imageList = append(imageList, &itemImage)
 	}
 	EncodeImagesToGif(imageList, outpath)
@@ -162,5 +167,63 @@ func CompressGif(sourceGif string, outGif string, quality int) {
 	err = gif.EncodeAll(outFile, &outGifData)
 	if err != nil {
 		log.Fatalln("gif.Encode", err)
+	}
+}
+
+//使用gifsicle,压缩单张gif
+//colorNum范围1-256，最佳128
+func CompressByGifsicle(source string, out string, colorNum string) {
+	if CurrentPath == "" {
+		CurrentPath, _ = os.Getwd()
+	}
+
+	outDir := path.Dir(out)
+	err := os.MkdirAll(outDir, os.ModePerm)
+
+	if err != nil {
+		log.Println("MkdirAll", outDir, err)
+		return
+	}
+	gifSoft := path.Join(CurrentPath, "gifsicle."+runtime.GOOS)
+
+	gifCmd := exec.Command(gifSoft, "--colors", colorNum, "-O3", source, "-o", out)
+	resByte, err := gifCmd.CombinedOutput()
+	gifName := path.Base(source)
+
+	if err != nil {
+		resStr := string(resByte)
+		log.Println(gifName, err, resStr, gifSoft+"\n")
+	}
+}
+
+//压缩文件夹下的所有gif文件
+func CompressGifDir(fromDir string, outDir string, colorNum string) {
+
+	fromFile, err := os.Open(fromDir)
+	if err != nil {
+		log.Println("os.Open()", err, fromDir)
+		return
+	}
+	err = os.MkdirAll(outDir, os.ModePerm)
+	if err != nil {
+		log.Println("MkdirAll", err, outDir)
+		return
+	}
+	fileList, err := fromFile.Readdir(0)
+	if err != nil {
+		log.Println("Readdir", err, fromDir)
+		return
+	}
+	if fileList == nil || len(fileList) <= 0 {
+		log.Println("empty dir ", fromFile)
+		return
+	}
+
+	for _, itemFile := range fileList {
+		if itemFile.IsDir() || itemFile.Size() <= 0 {
+			continue
+		}
+		name := itemFile.Name()
+		CompressByGifsicle(path.Join(fromDir, name), path.Join(outDir, name), colorNum)
 	}
 }
