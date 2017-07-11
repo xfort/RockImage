@@ -55,7 +55,7 @@ func compressGif() {
 					colorNum = itemArray[1]
 				case "maxSize":
 					maxSize = itemArray[1]
-				case "watermarkpath":
+				case "watermark":
 					watermarkpath = itemArray[1]
 				}
 			}
