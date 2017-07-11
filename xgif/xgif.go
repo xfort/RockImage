@@ -2,6 +2,7 @@ package xgif
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -11,6 +12,7 @@ import (
 	"path"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 var CurrentPath string
@@ -173,6 +175,8 @@ func CompressGif(sourceGif string, outGif string, quality int) {
 //使用gifsicle,压缩单张gif
 //colorNum范围1-256，最佳128
 func CompressByGifsicle(source string, out string, colorNum string) {
+	fmt.Println("开始压缩", source)
+
 	if CurrentPath == "" {
 		CurrentPath, _ = os.Getwd()
 	}
@@ -184,7 +188,7 @@ func CompressByGifsicle(source string, out string, colorNum string) {
 		log.Println("MkdirAll", outDir, err)
 		return
 	}
-	gifSoft := path.Join(CurrentPath, "gifsicle."+runtime.GOOS)
+	gifSoft := path.Join(CurrentPath, "bin", "gifsicle."+runtime.GOOS)
 
 	gifCmd := exec.Command(gifSoft, "--colors", colorNum, "-O3", source, "-o", out)
 	resByte, err := gifCmd.CombinedOutput()
@@ -197,7 +201,7 @@ func CompressByGifsicle(source string, out string, colorNum string) {
 }
 
 //压缩文件夹下的所有gif文件
-func CompressGifDir(fromDir string, outDir string, colorNum string) {
+func CompressGifDir(fromDir string, outDir string, maxSize string, colorNum string) {
 
 	fromFile, err := os.Open(fromDir)
 	if err != nil {
@@ -224,6 +228,93 @@ func CompressGifDir(fromDir string, outDir string, colorNum string) {
 			continue
 		}
 		name := itemFile.Name()
-		CompressByGifsicle(path.Join(fromDir, name), path.Join(outDir, name), colorNum)
+		if strings.HasSuffix(name, "gif") {
+			if maxSize == "" || maxSize == "0" {
+				CompressByGifsicle(path.Join(fromDir, name), path.Join(outDir, name), colorNum)
+			} else {
+				CompressGifSize(path.Join(fromDir, name), path.Join(outDir, name), maxSize)
+			}
+		}
 	}
 }
+
+//使用gifsicle,压缩单张gif,达到目标尺寸
+func CompressGifSize(source string, out string, targetSize string) {
+	fmt.Println("开始压缩", source)
+	targetFileSize, err := strconv.ParseFloat(targetSize, 32)
+	if err != nil {
+		log.Fatalln("解析文件体积参数失败", targetSize, err)
+	}
+
+	targetFileSize = targetFileSize * 1000 * 1000
+
+	if CurrentPath == "" {
+		CurrentPath, _ = os.Getwd()
+	}
+
+	outDir := path.Dir(out)
+	err = os.MkdirAll(outDir, os.ModePerm)
+
+	if err != nil {
+		log.Println("MkdirAll", outDir, err)
+		return
+	}
+
+	gifSoft := path.Join(CurrentPath, "bin", "gifsicle."+runtime.GOOS)
+
+	colorNum := 256
+
+	//	lastOutSize := 0
+	//	colorDiff := 0
+	metaColor := 256
+	//	lowColor := 0
+	//	upcolor := 256
+	//	lastColorNum := 256
+	for {
+		gifCmd := exec.Command(gifSoft, "--colors", strconv.Itoa(colorNum), "-O3", source, "-o", out)
+		resByte, err := gifCmd.CombinedOutput()
+		gifName := path.Base(source)
+
+		if err != nil {
+			resStr := string(resByte)
+			log.Println("压缩错误", gifName, err, resStr, gifSoft+"\n")
+			break
+		}
+		outFileInfo, err := os.Stat(out)
+		if err != nil {
+			log.Println(err, out)
+		}
+
+		outsize := outFileInfo.Size()
+		//		log.Println("file size", outsize, targetFileSize, colorNum, metaColor)
+
+		diffCurrent := int64(targetFileSize) - outsize
+		if diffCurrent >= 0 && colorNum >= 256 {
+			break
+		}
+
+		metaColor = metaColor / 2
+
+		if metaColor <= 0 {
+			if diffCurrent < 0 {
+				colorNum = colorNum - 1
+				continue
+			}
+			err = os.Rename(out, strings.Replace(out, ".gif", "_"+strconv.Itoa(colorNum)+".gif", -1))
+			if err != nil {
+				log.Println("重命名文件失败", out)
+			}
+			break
+		}
+
+		if diffCurrent < 0 {
+			colorNum = colorNum - metaColor
+		} else {
+			if colorNum >= 256 {
+				colorNum = 0
+			}
+			colorNum = colorNum + metaColor
+		}
+	}
+}
+

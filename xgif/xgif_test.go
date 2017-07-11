@@ -29,5 +29,5 @@ func TestCompressByGifsicle(t *testing.T) {
 }
 
 func TestCompressGifDir(t *testing.T) {
-	CompressGifDir("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/test/", "10")
+	CompressGifSize("/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif/", "/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/test/", "2.0")
 }

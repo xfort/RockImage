@@ -1,10 +1,16 @@
 //压缩文件夹下的所有gif文件
 
 //gif来源文件夹路径
-fromDir=/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/gif
+fromDir=/Users/Mac/Work/ffmpeg/WeiXin/gif/
 
 //压缩后的存放路径
-outDir=/Users/Mac/Work/go/code/work/src/github.com/xfort/RockImage/xgif/temp
+outDir=/Users/Mac/Work/ffmpeg/WeiXin/gifout
 
-//范围1-256，数字越小，压缩后的文件越小（画面可能会不清晰）
+//压缩后的最大体积，单位为(M).优先级比colorNum高。值为0时代表不使用此参数
+maxSize=2.0
+
+//范围1-256，数字越小，压缩后的文件越小。若maxSize>0则忽略此参数
 colorNum=128
+
+//水印图片
+watermark=/Users/xs/Documents/robot48.png

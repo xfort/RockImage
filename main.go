@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -34,6 +35,8 @@ func compressGif() {
 	var fromDirPath string
 	var outDirPath string
 	var colorNum string
+	var maxSize string
+	var watermarkpath string
 	for {
 		lineByte, _, err := configReader.ReadLine()
 		if err == io.EOF {
@@ -50,12 +53,16 @@ func compressGif() {
 					outDirPath = itemArray[1]
 				case "colorNum":
 					colorNum = itemArray[1]
+				case "maxSize":
+					maxSize = itemArray[1]
+				case "watermarkpath":
+					watermarkpath = itemArray[1]
 				}
 			}
 		}
 	}
 
-	log.Println(fromDirPath+"\n", outDirPath+"\n", colorNum)
+	log.Println("读取配置\n", fromDirPath+"\n", outDirPath+"\n", colorNum+"\n", maxSize+"\n", watermarkpath)
 
 	if fromDirPath == "" {
 		log.Fatalln("fromDir 错误")
@@ -69,9 +76,14 @@ func compressGif() {
 		colorNum = "256"
 	}
 
-	xgif.CompressGifDir(fromDirPath, outDirPath, colorNum)
+	gifHandler := &xgif.GifHandler{}
 
-	log.Println("任务结束\n", "保存路径="+outDirPath)
-	time.Sleep(5 * time.Minute)
+	err = gifHandler.WatermarkCompressDir(fromDirPath, outDirPath, watermarkpath, colorNum, maxSize)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	//xgif.CompressGifDir(fromDirPath, outDirPath, maxSize, colorNum)
 
+	fmt.Println("任务结束\n", "文件保存路径="+outDirPath)
+	time.Sleep(20 * time.Second)
 }
