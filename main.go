@@ -6,11 +6,11 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"strings"
 	"time"
 
 	"github.com/xfort/RockImage/xgif"
+	"path/filepath"
 )
 
 func main() {
@@ -18,13 +18,13 @@ func main() {
 }
 
 func compressGif() {
-	currentPath, err := os.Getwd()
+	currentPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	configFile, err := os.Open(path.Join(currentPath, "config.txt"))
+	configFile, err := os.Open(filepath.Join(currentPath, "config.txt"))
 	if err != nil {
 		log.Fatalln(err, "无法读取config文件", currentPath)
 	}

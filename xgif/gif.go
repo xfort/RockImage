@@ -3,7 +3,7 @@ package xgif
 import (
 	"log"
 	"os"
-	"path"
+
 	"runtime"
 	"os/exec"
 
@@ -54,7 +54,7 @@ func (gif *GifHandler) Compress(sourcegif string, outgif string, colornum string
 		return errors.New("错误:ImageMagick文件夹路径为空")
 	}
 
-	gifsiclePath := path.Join(gif.GifsicleDirPath, "gifsicle."+runtime.GOOS)
+	gifsiclePath := filepath.Join(gif.GifsicleDirPath, "gifsicle."+runtime.GOOS)
 
 	if targetSize > 0 {
 		return gif.CompressByTargetsize(sourcegif, outgif, targetSize, gifsiclePath)
@@ -80,7 +80,7 @@ func (gif *GifHandler) CompressByTargetsize(sourcegif string, outgif string, tar
 	colorNum := 256
 	metaColor := 256
 	targtesize = targtesize * 1000 * 1000
-	gifName := path.Base(sourcegif)
+	gifName := filepath.Base(sourcegif)
 
 	sourceGifFile, err := os.Stat(sourcegif)
 	if err != nil {
@@ -194,7 +194,7 @@ func (gif *GifHandler) WatermarkCompressDir(fromDir string, outDir string, water
 	convertPath := ""
 	gifsiclePath := ""
 	if gif.ImageMagickDirPath == "" {
-		execpath, err := os.Getwd()
+		execpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 		if err != nil {
 			return errors.New(fmt.Sprintln("错误：读取当前文件路径失败", err))
 		}
