@@ -18,7 +18,6 @@ func main() {
 }
 
 func compressGif() {
-
 	currentPath, err := os.Getwd()
 
 	if err != nil {
@@ -85,5 +84,5 @@ func compressGif() {
 	//xgif.CompressGifDir(fromDirPath, outDirPath, maxSize, colorNum)
 
 	fmt.Println("任务结束\n", "文件保存路径="+outDirPath)
-	time.Sleep(20 * time.Second)
+	time.Sleep(60 * time.Second)
 }
